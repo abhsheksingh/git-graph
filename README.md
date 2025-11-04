@@ -61,7 +61,7 @@ jobs:
 ## Example of generated repo graph image
 
 <!-- STRUCTURE-GRAPH -->
-<img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/459e66e5-5fd6-47a6-94be-bf997177ce40" />
+<img width="800" height="600" alt="image" src="https://github.com/user-attachments/assets/a11d443a-11f1-451d-af2d-ee85a1a1e5c5" />
 <p>**Green circle node is for python files and grey for others<p>
 
 ### 🎬 Demo
