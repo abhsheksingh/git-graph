@@ -1,0 +1,71 @@
+name: 'Git Graph'
+description: 'Generates a folder structure graph and updates README'
+author: 'Abhishek Singh'
+
+branding:
+  icon: 'git-commit'
+  color: 'blue'
+
+inputs:
+  folder-path:
+    description: 'Path to the folder to visualize'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install Puppeteer
+      run: npm install puppeteer
+      shell: bash
+
+    - name: Generate folder structure JSON
+      run: node "$GITHUB_ACTION_PATH/scripts/generate-structure.js" "${{ inputs.folder-path }}"
+      shell: bash
+
+    - name: Create HTML visualization
+      run: cp "$GITHUB_ACTION_PATH/scripts/structure.html" .github/rgraph/output.html
+      shell: bash
+
+    - name: Inline structure.json into output.html
+      run: |
+        STRUCTURE_JSON=$(cat .github/rgraph/structure.json | jq -c .)
+        sed -i "s|REPLACE_ME|$STRUCTURE_JSON|" .github/rgraph/output.html
+      shell: bash
+
+    - name: Convert HTML to image (using Puppeteer)
+      run: |
+        node -e "
+          const puppeteer = require('puppeteer');
+          (async () => {
+            const delay = ms => new Promise(res => setTimeout(res, ms));
+            const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+            const page = await browser.newPage();
+            await page.goto('file://' + process.cwd() + '/.github/rgraph/output.html', { waitUntil: 'networkidle0' });
+            await delay(2000);
+            await page.screenshot({ path: '.github/rgraph/structure.png' });
+            await browser.close();
+          })();
+        "
+      shell: bash
+
+    - name: Update README with image
+      run: |
+        sed -i '/<!-- STRUCTURE-GRAPH -->/{
+        n; s|.*|![Structure](.github/rgraph/structure.png)|
+        }' README.md
+      shell: bash
+
+    - name: Commit and push changes
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add .github/rgraph/structure.png README.md .github/rgraph/output.html .github/rgraph/structure.json
+        git commit -m "📦 Auto-update folder structure image and README" || echo "No changes to commit"
+        git push origin HEAD
+      shell: bash
