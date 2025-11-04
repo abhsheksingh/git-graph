@@ -1,4 +1,4 @@
-name: 'Git Graph'
+name: 'Git Graph (Repo)'
 description: 'Generates a folder structure graph and updates README'
 author: 'Abhishek Singh'
 
