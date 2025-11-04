@@ -1,6 +1,11 @@
 
 # Git Graph — Visualize Your Repo Structure
 Automatically generate and embed a visual folder structure graph in your README.md file using GitHub Actions.
+<br>
+<br>
+<img width="718" height="600" alt="509636533-a11d443a-11f1-451d-af2d-ee85a1a1e5c5" src="https://github.com/user-attachments/assets/7452f558-2e9f-44ab-84d4-9e5a769b49c1" />
+<br>
+
 
 🚀 Features
 
